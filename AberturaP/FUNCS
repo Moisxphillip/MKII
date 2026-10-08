@@ -1,0 +1,73 @@
+# pisca a tela certo numero de vezes
+# a0 tempo de cada piscada em millisegundos.
+# a1 número de piscadas.
+	piscadela:
+	addi sp,sp,-4
+	sw t1,0(sp)
+	
+	li s0,0xFF200604	# Escolhe o Frame 0 ou 1
+	li t2,0			# inicio Frame 0
+LOOP1piscadela: 
+	beqz a1,ENDpiscadela
+	addi a1,a1,-1
+	sw t2,0(s0)		# seleciona a Frame t2
+	xori t2,t2,0x001	# troca de frame
+	
+	li a7,32
+	ecall
+	j LOOP1piscadela
+ENDpiscadela:
+	sw t2,0(s0)		# seleciona a Frame t2
+	
+	lw t1,0(sp)
+	addi sp,sp,4
+	ret
+	
+	# transforma bitmap_display em 0xC7
+	# a0(frame) -> 
+	loadimage:
+        beqz    a1,.L4
+        li      a3,-15650816 
+        addi    a3,a3,-1024
+        li      a5,-15728640
+.L2:
+        addi    a0,a0,8
+.L3:
+        lw      a4,0(a0)
+        addi    a5,a5,4
+        addi    a0,a0,4
+        sw      a4,-4(a5)
+        bgtu    a3,a5,.L3
+        ret
+.L4:
+        li      a3,-16699392
+        addi    a3,a3,-1024
+        li      a5,-16777216
+        j       .L2
+        
+##Prencher a Tela com uma cor escolhida##
+
+#a0 escolhe a tela 0 ou 1
+#a1 cor dos bits ex:  0x07070707	vermelho	
+#li a1,0x07070707
+	prencheTela:
+	addi sp,sp,-8	
+	sw t2,4(sp)
+	sw t1,0(sp)
+	beqz a0,TELA0
+	li t1,0xFF100000	# endereco inicial da Memoria VGA - Frame 1
+	li t2,0xFF112C00	# endereco final 
+	j LOOP1prencheTela
+TELA0:
+	li t1,0xFF000000	# endereco inicial da Memoria VGA - Frame 0
+	li t2,0xFF012C00	# endereco final 
+LOOP1prencheTela: 	
+	beq t1,t2,ENDprencheTela		# Se for o último endereço então sai do loop
+	sw a1,0(t1)		# escreve a word na memória VGA
+	addi t1,t1,4		# soma 4 ao endereço
+	j LOOP1prencheTela			# volta a verificar
+ENDprencheTela:
+	lw t2,4(sp)
+	lw t1,0(sp)
+	addi sp,sp,8
+	ret

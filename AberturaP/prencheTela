@@ -1,0 +1,28 @@
+##Prencher a Tela com uma cor escolhida##
+
+#a0 escolhe a tela 0 ou 1
+#a1 cor dos bits ex:  0x07070707	vermelho	
+#li a1,0x07070707
+	prencheTela:
+	addi sp,sp,-8	
+	sw t2,4(sp)
+	sw t1,0(sp)
+	beqz a0,TELA0
+	li t1,0xFF100000	# endereco inicial da Memoria VGA - Frame 1
+	li t2,0xFF112C00	# endereco final 
+	j LOOP1prencheTela
+TELA0:
+	li t1,0xFF000000	# endereco inicial da Memoria VGA - Frame 0
+	li t2,0xFF012C00	# endereco final 
+LOOP1prencheTela: 	
+	beq t1,t2,ENDprencheTela		# Se for o último endereço então sai do loop
+	sw a1,0(t1)		# escreve a word na memória VGA
+	addi t1,t1,4		# soma 4 ao endereço
+	j LOOP1prencheTela			# volta a verificar
+ENDprencheTela:
+	lw t2,4(sp)
+	lw t1,0(sp)
+	addi sp,sp,8
+	ret
+	
+	

@@ -1,0 +1,168 @@
+	
+.data
+	.include "mkraio1.s"
+	.include "mkraio2.s"
+	.include "mkraio3.s"
+	.include "mkraio4.s"
+	.include "mkraio5.s"
+	.include "mkraioclaro.s"
+	.include "mklogorelampago.s"
+	.include "mklogo.s"
+	.include "mklogoraio1.s"
+	.include "mklogoraio2.s"
+	.include "mklogoraio3.s"
+	
+.text
+	#sequencia de raios antes do logo
+	la a0, mkraio1
+	li a1,1
+	call loadimage
+	
+	li a0,65
+	li a1,6
+	call piscadelas
+	
+	li a0,700
+	li a7,32
+	ecall
+	
+	la a0, mkraio2
+	li a1,1
+	call loadimage
+	
+	li a0,65
+	li a1,6
+	call piscadela
+	
+	
+	la a0, mkraio3
+	li a1,1
+	call loadimage
+	
+	
+	li a0,80
+	li a1,6
+	call piscadela
+	
+	li a0,700
+	li a7,32
+	ecall
+	
+	la a0, mkraio4
+	li a1,1
+	call loadimage
+	
+	li a0,80
+	li a1,6
+	call piscadela
+	
+	la a0, mkraio5
+	li a1,1
+	call loadimage
+	
+	li a0,80
+	li a1,6
+	call piscadela
+	
+	# carrega raio claro
+	la a0, mkraioclaro
+	li a1,1
+	call loadimage
+	
+	li a0,80
+	li a1,6
+	call piscadela
+	
+	# escolhe tela 0 
+	#addi t1,zero,0
+	#li s0,0xFF200604
+	#sw t1,0(s0)
+	
+	# carrega mklogoraio
+	la a0, mklogorelampago
+	li a1,0
+	call loadimage
+	
+	la a0, mklogo
+	li a1,0
+	call loadimage
+	
+	#raios depois do logo
+	la a0, mklogoraio3
+	li a1,1
+	call loadimage
+	
+	li a0,80
+	li a1,6
+	call piscadela
+	
+	la a0, mklogoraio1
+	li a1,1
+	call loadimage
+	
+	li a0,80
+	li a1,6
+	call piscadela
+	
+	la a0, mklogoraio2
+	li a1,1
+	call loadimage
+	
+	li a0,80
+	li a1,6
+	call piscadela
+	
+	li a7,10  
+	ecall
+	#-------------------- END -----------------
+	
+	
+	
+	#a0 tempo de cada piscada em millisegundos.
+	#a1 número de piscadas.
+	piscadela:
+	addi sp,sp,-4
+	sw t1,0(sp)
+	
+	li s0,0xFF200604	# Escolhe o Frame 0 ou 1
+	li t2,0			# inicio Frame 0
+LOOP1piscadela: 
+	beqz a1,ENDpiscadela
+	addi a1,a1,-1
+	sw t2,0(s0)		# seleciona a Frame t2
+	xori t2,t2,0x001	# troca de frame
+	
+	li a7,32
+	ecall
+	j LOOP1piscadela
+ENDpiscadela:
+	sw t2,0(s0)		# seleciona a Frame t2
+	
+	lw t1,0(sp)
+	addi sp,sp,4
+	ret
+		
+	
+		
+	# transforma bitmap_display em 0xC7
+	# a0(frame) -> 
+	loadimage:
+        beqz    a1,.L4
+        li      a3,-15650816 
+        addi    a3,a3,-1024
+        li      a5,-15728640
+.L2:
+        addi    a0,a0,8
+.L3:
+        lw      a4,0(a0)
+        addi    a5,a5,4
+        addi    a0,a0,4
+        sw      a4,-4(a5)
+        bgtu    a3,a5,.L3
+        ret
+.L4:
+        li      a3,-16699392
+        addi    a3,a3,-1024
+        li      a5,-16777216
+        j       .L2
+.include "prencheTela"

@@ -1,0 +1,122 @@
+.data
+	.include "mkraio1.s"
+	.include "mkraio2.s"
+	.include "mkraio3.s"
+	.include "mkraio4.s"
+	.include "mkraio5.s"
+	.include "mkraioclaro.s"
+	.include "mklogorelampago.s"
+	.include "mklogo.s"
+	.include "mklogoraio1.s"
+	.include "mklogoraio2.s"
+	.include "mklogoraio3.s"
+	
+.text
+Aberturalegal:
+		#sequencia de raios antes do logo
+	addi sp, sp, -4
+	sw ra, 0(sp)
+	la a0, mkraio1
+	li a1,1
+	call loadimage
+	
+	li a0,65
+	li a1,6
+	call piscadela
+	
+	li a0,700
+	li a7,32
+	ecall
+	
+	la a0, mkraio2
+	li a1,1
+	call loadimage
+	
+	li a0,65
+	li a1,6
+	call piscadela
+	
+	
+	la a0, mkraio3
+	li a1,1
+	call loadimage
+	
+	
+	li a0,80
+	li a1,6
+	call piscadela
+	
+	li a0,700
+	li a7,32
+	ecall
+	
+	la a0, mkraio4
+	li a1,1
+	call loadimage
+	
+	li a0,80
+	li a1,6
+	call piscadela
+	
+	la a0, mkraio5
+	li a1,1
+	call loadimage
+	
+	li a0,80
+	li a1,6
+	call piscadela
+	
+	# carrega raio claro
+	la a0, mkraioclaro
+	li a1,1
+	call loadimage
+	
+	li a0,80
+	li a1,6
+	call piscadela
+	
+	# escolhe tela 0 
+	#addi t1,zero,0
+	#li s0,0xFF200604
+	#sw t1,0(s0)
+	
+	# carrega mklogoraio
+	la a0, mklogorelampago
+	li a1,0
+	call loadimage
+	
+	la a0, mklogo
+	li a1,0
+	call loadimage
+	
+	#raios depois do logo
+	la a0, mklogoraio3
+	li a1,1
+	call loadimage
+	
+	li a0,80
+	li a1,6
+	call piscadela
+	
+	la a0, mklogoraio1
+	li a1,1
+	call loadimage
+	
+	li a0,80
+	li a1,6
+	call piscadela
+	
+	la a0, mklogoraio2
+	li a1,1
+	call loadimage
+	
+	li a0,80
+	li a1,6
+	call piscadela
+	
+	lw ra, 0(sp)
+	addi sp, sp, 4
+	ret
+	#-------------------- END -----------------
+	
+	.include "FUNCS"
